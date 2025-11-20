@@ -227,6 +227,9 @@
             object-position: center;
             transition: transform 0.5s ease;
         }
+        .img-wrapper.img-contain img {
+            object-fit: contain;
+        }
         
         .img-wrapper:hover img { transform: scale(1.05); }
         
@@ -530,7 +533,7 @@
                         <div class="card-header">
                             <span><i class="fas fa-temperature-high"></i> Evolución Histórica y Proyectada (Warming Stripes)</span>
                         </div>
-                        <div class="img-wrapper" style="height: 180px;" onclick="openLightbox('Napo/01_Series_Temporales_Temperatura/warming_stripes_anomalias.png')">
+                        <div class="img-wrapper img-contain" style="height: 220px;" onclick="openLightbox('Napo/01_Series_Temporales_Temperatura/warming_stripes_anomalias.png')">
                             <img src="Napo/01_Series_Temporales_Temperatura/warming_stripes_anomalias.png" loading="lazy">
                         </div>
                     </div>
@@ -936,7 +939,7 @@
                         <div class="card-header">
                             <span><i class="fas fa-temperature-high"></i> Evolución Histórica y Proyectada (Warming Stripes)</span>
                         </div>
-                        <div class="img-wrapper" style="height: 180px;" onclick="openLightbox('Tungurahua/01_Series_Temporales_Temperatura/warming_stripes_anomalias.png')">
+                        <div class="img-wrapper img-contain" style="height: 220px;" onclick="openLightbox('Tungurahua/01_Series_Temporales_Temperatura/warming_stripes_anomalias.png')">
                             <img src="Tungurahua/01_Series_Temporales_Temperatura/warming_stripes_anomalias.png" loading="lazy">
                         </div>
                     </div>
