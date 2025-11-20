@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Cambio Climático</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0f172a;
+            --secondary: #334155;
+            --accent: #2563eb;
+            --accent-hover: #1d4ed8;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --light: #f8fafc;
+            --border: #e2e8f0;
+            --sidebar-width: 260px;
+        }
+        
+        * { box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--secondary);
+            margin: 0;
+            background-color: #f1f5f9;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        /* --- Header --- */
+        header {
+            background-color: white;
+            border-bottom: 1px solid var(--border);
+            padding: 15px 30px;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 50;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 90px;
+            gap: 20px;
+        }
+        
+        .logo-area h1 { margin: 0; font-size: 1.4rem; color: var(--primary); font-weight: 700; }
+        .logo-area span { display:block; font-weight: 500; color: #64748b; font-size: 0.85rem; }
+        
+        .logo-strip {
+            display: flex;
+            gap: 14px;
+            align-items: center;
+        }
+        .logo-strip img {
+            max-height: 42px;
+            width: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 1px 3px rgba(0,0,0,0.12));
+        }
+        
+        /* --- Layout --- */
+        .main-wrapper {
+            display: flex;
+            margin-top: 70px; /* Header height */
+            height: calc(100vh - 70px);
+            overflow: hidden;
+        }
+        
+        /* --- Sidebar --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: white;
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 20px 0;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+        
+        .sidebar-label {
+            padding: 0 20px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #94a3b8;
+            font-weight: 600;
+            margin-bottom: 10px;
+            margin-top: 20px;
+        }
+        
+        .nav-item {
+            padding: 12px 20px;
+            color: var(--secondary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+        
+        .nav-item:hover {
+            background-color: var(--light);
+            color: var(--primary);
+        }
+        
+        .nav-item.active {
+            background-color: #eff6ff;
+            color: var(--accent);
+            border-left-color: var(--accent);
+            font-weight: 600;
+        }
+        
+        .nav-item i { width: 20px; text-align: center; }
+        
+        /* --- Main Content --- */
+        .content-area {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+        
+        .section-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            margin-bottom: 60px;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        /* --- Region Selector (Top Bar) --- */
+        .region-selector {
+            display: flex;
+            gap: 10px;
+            background: #f1f5f9;
+            padding: 5px;
+            border-radius: 8px;
+        }
+        
+        .region-btn {
+            padding: 8px 16px;
+            border: none;
+            background: transparent;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #64748b;
+            transition: all 0.2s;
+        }
+        
+        .region-btn.active {
+            background: white;
+            color: var(--accent);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        /* --- Cards & Grids --- */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+        
+        .full-width { grid-column: 1 / -1; }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
+        }
+        
+        .card-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border);
+            background: #f8fafc;
+            font-weight: 600;
+            color: var(--primary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .card-body { padding: 0; }
+        .card-padding { padding: 20px; }
+        
+        .img-wrapper {
+            width: 100%;
+            height: 250px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f1f5f9;
+            cursor: zoom-in;
+        }
+        
+        .img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            transition: transform 0.5s ease;
+        }
+        
+        .img-wrapper:hover img { transform: scale(1.05); }
+        
+        .img-caption {
+            padding: 12px 20px;
+            font-size: 0.85rem;
+            color: #64748b;
+            background: white;
+            border-top: 1px solid var(--border);
+        }
+        
+        /* --- Key Metrics Styles --- */
+        .metrics-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .kpi-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .kpi-value { font-size: 1.6rem; font-weight: 800; color: var(--primary); margin: 5px 0; }
+        .kpi-label { font-size: 0.75rem; color: #64748b; text-transform: uppercase; font-weight: 600; }
+        .kpi-sub { font-size: 0.8rem; color: #94a3b8; margin-top: 5px; }
+        
+        /* AI Gauge */
+        .ai-scale {
+            margin-top: 10px;
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 3px;
+            position: relative;
+            width: 100%;
+        }
+        .ai-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.3s;
+        }
+        .ai-category {
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        /* --- Data Table --- */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+        
+        table { width: 100%; border-collapse: collapse; background: white; }
+        th, td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+        th { background: #f8fafc; font-weight: 600; color: var(--secondary); }
+        tr:last-child td { border-bottom: none; }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        .badge-ssp126 { background: #dcfce7; color: #15803d; }
+        .badge-ssp370 { background: #fef3c7; color: #b45309; }
+        .badge-ssp585 { background: #fee2e2; color: #b91c1c; }
+        
+        .val-pos { color: #10b981; font-weight: 600; }
+        .val-neg { color: #ef4444; font-weight: 600; }
+
+        /* --- Scenario Tabs --- */
+        .scenario-tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+        .scen-tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            border-bottom: none;
+            border-radius: 6px 6px 0 0;
+            background: transparent;
+            font-weight: 500;
+            color: #64748b;
+        }
+        .scen-tab:hover { background: #f1f5f9; }
+        .scen-tab.active {
+            background: white;
+            border-color: var(--border);
+            color: var(--primary);
+            border-bottom-color: white;
+            margin-bottom: -1px;
+        }
+
+        /* --- Lightbox --- */
+        .lightbox {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(5px);
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+        
+        .lightbox img {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 4px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+        }
+        
+        .lightbox-close {
+            position: absolute;
+            top: 20px; right: 30px;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+        .lightbox-close:hover { opacity: 1; }
+
+    </style>
+    <script>
+        // Global variable to track the currently active region
+        var activeRegion = ''; 
+
+        function switchRegion(regionId) {
+            activeRegion = regionId;
+            
+            // Hide all region contents
+            document.querySelectorAll('.region-content').forEach(el => el.style.display = 'none');
+            // Show selected region content
+            document.getElementById('content-' + regionId).style.display = 'block';
+            
+            // Update button states
+            document.querySelectorAll('.region-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById('btn-' + regionId).classList.add('active');
+        }
+
+        function scrollToSection(sectionBaseId) {
+            // Scroll to the section within the ACTIVE region
+            // IDs are formatted as: sectionBaseId-regionCode
+            var targetId = sectionBaseId + '-' + activeRegion;
+            const el = document.getElementById(targetId);
+            if (el) {
+                el.scrollIntoView({behavior: 'smooth'});
+            } else {
+                console.warn('Target element not found:', targetId);
+            }
+        }
+
+        function switchScenarioTab(regionCode, scenKey) {
+            // Hide all contents for this region
+            const container = document.getElementById('scen-container-' + regionCode);
+            container.querySelectorAll('.scen-content').forEach(el => el.style.display = 'none');
+            
+            // Show selected
+            document.getElementById('scen-content-' + regionCode + '-' + scenKey).style.display = 'block';
+            
+            // Update tabs
+            const tabContainer = document.getElementById('scen-tabs-' + regionCode);
+            tabContainer.querySelectorAll('.scen-tab').forEach(el => el.classList.remove('active'));
+            document.getElementById('tab-' + regionCode + '-' + scenKey).classList.add('active');
+        }
+        
+        function openLightbox(src) {
+            const lb = document.getElementById('lightbox');
+            const img = document.getElementById('lightbox-img');
+            img.src = src;
+            lb.style.display = 'flex';
+        }
+        
+        function closeLightbox() {
+            document.getElementById('lightbox').style.display = 'none';
+        }
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeLightbox();
+        });
+        
+        // Initialize activeRegion on load
+        window.addEventListener('DOMContentLoaded', () => {
+            // Find the button with class 'active' to determine default region
+            const activeBtn = document.querySelector('.region-btn.active');
+            if (activeBtn) {
+                // Extract ID from btn-CODE
+                activeRegion = activeBtn.id.replace('btn-', '');
+            }
+        });
+    </script>
+</head>
+<body>
+
+    <header>
+        <div class="logo-area">
+            <h1>Análisis Climático · Balance Hídrico</h1>
+            <span>Producto 1 · Consultoría de Resiliencia Hídrica</span>
+        </div>
+        <div class="logo-strip">
+            <img src="assets/logos/FFLA.png" alt="FFLA">
+            <img src="assets/logos/FMPLPT.png" alt="FMPLPT">
+            <img src="assets/logos/fodesna.jpg" alt="FODESNA">
+        </div>
+        
+        <div class="region-selector">
+            <button id="btn-FODESNA" class="region-btn active" onclick="switchRegion('FODESNA')">FODESNA</button>
+            <button id="btn-FDAT" class="region-btn" onclick="switchRegion('FDAT')">FMPLPT</button>
+        </div>
+    </header>
+
+    <div class="main-wrapper">
+        
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <div class="sidebar-label">Navegación</div>
+            <div class="nav-item active" onclick="scrollToSection('resumen')">
+                <i class="fas fa-tachometer-alt"></i> Resumen Ejecutivo
+            </div>
+            <div class="nav-item" onclick="scrollToSection('escenarios')">
+                <i class="fas fa-layer-group"></i> Análisis por Escenario
+            </div>
+            <div class="nav-item" onclick="scrollToSection('series')">
+                <i class="fas fa-chart-line"></i> Series Temporales
+            </div>
+            <div class="nav-item" onclick="scrollToSection('estacionalidad')">
+                <i class="fas fa-calendar-alt"></i> Estacionalidad
+            </div>
+            <div class="nav-item" onclick="scrollToSection('mapas')">
+                <i class="fas fa-map"></i> Análisis Espacial
+            </div>
+            
+            <div style="flex:1"></div>
+            <div style="padding: 20px; font-size: 0.75rem; color: #94a3b8; text-align: center;">
+                &copy; 2025 Producto 1 · Balance Hídrico<br>Equipo de Consultoría
+            </div>
+        </div>
+
+        <!-- CONTENT AREA -->
+        <div class="content-area">
+
+            <div id="content-FODESNA" class="region-content" style="display: block;">
+                
+                <!-- SECTION: RESUMEN EJECUTIVO -->
+                <div id="resumen-FODESNA" class="section-container">
+                    <div class="section-title"><i class="fas fa-clipboard-check"></i> Resumen Ejecutivo (Línea Base 1981-2010)</div>
+                    
+                    <!-- Key Metrics -->
+                    <div class="metrics-row">
+        
+                        <div class="kpi-card">
+                            <div class="kpi-label">Precipitación</div>
+                            <div class="kpi-value">2646 <span style="font-size:1rem; font-weight:400">mm</span></div>
+                            <div class="kpi-sub">σ = 207 mm</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">Evapotranspiración</div>
+                            <div class="kpi-value">2613 <span style="font-size:1rem; font-weight:400">mm</span></div>
+                            <div class="kpi-sub">Demanda Potencial</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">Balance Hídrico</div>
+                            <div class="kpi-value">32 <span style="font-size:1rem; font-weight:400">mm</span></div>
+                            <div class="kpi-sub">Oferta Neta</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">Temperatura</div>
+                            <div class="kpi-value">17.2°C</div>
+                            <div class="kpi-sub">Media Anual</div>
+                        </div>
+                         <div class="kpi-card">
+                            <div class="kpi-label">Aridez (AI)</div>
+                            <div class="kpi-value">1.01</div>
+                            <div class="ai-scale"><div class="ai-fill" style="width: 100%; background-color: #059669;"></div></div>
+                            <div class="ai-category" style="color: #059669;">Húmedo</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">Racha Seca (CDD)</div>
+                            <div class="kpi-value">7 <span style="font-size:1rem; font-weight:400">días</span></div>
+                            <div class="kpi-sub">Máximo consecutivo</div>
+                        </div>
+            
+                    </div>
+                    
+                    <!-- Warming Stripes -->
+                    <div class="card full-width" style="margin-bottom: 30px;">
+                        <div class="card-header">
+                            <span><i class="fas fa-temperature-high"></i> Evolución Histórica y Proyectada (Warming Stripes)</span>
+                        </div>
+                        <div class="img-wrapper" style="height: 180px;" onclick="openLightbox('Napo/01_Series_Temporales_Temperatura/warming_stripes_anomalias.png')">
+                            <img src="Napo/01_Series_Temporales_Temperatura/warming_stripes_anomalias.png" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- SECTION: ESCENARIOS -->
+                <div id="escenarios-FODESNA" class="section-container">
+                    <div class="section-title"><i class="fas fa-layer-group"></i> Análisis por Escenario</div>
+                    
+                    <div class="scenario-tabs" id="scen-tabs-FODESNA">
+                        <div id="tab-FODESNA-ssp126" class="scen-tab active" onclick="switchScenarioTab('FODESNA', 'ssp126')">SSP1-2.6 (Optimista)</div>
+                        <div id="tab-FODESNA-ssp370" class="scen-tab" onclick="switchScenarioTab('FODESNA', 'ssp370')">SSP3-7.0 (Medio)</div>
+                        <div id="tab-FODESNA-ssp585" class="scen-tab" onclick="switchScenarioTab('FODESNA', 'ssp585')">SSP5-8.5 (Pesimista)</div>
+                    </div>
+                    
+                    <div id="scen-container-FODESNA">
+        
+                        <div id="scen-content-FODESNA-ssp126" class="scen-content" style="display: block;">
+                            <div class="dashboard-grid">
+                                <!-- Evolution Table -->
+                                <div class="card full-width">
+                                    <div class="card-header">Evolución Temporal de Impactos (SSP1-2.6)</div>
+                                    <div class="table-container">
+                                        <table>
+                                            <thead>
+                                                <tr>
+                                                    <th>Horizonte</th>
+                                                    <th>Δ Temperatura</th>
+                                                    <th>Δ Precipitación</th>
+                                                    <th>Δ Balance Hídrico</th>
+                                                    <th>Δ Días Secos</th>
+                                                    <th>Δ Racha Seca (CDD)</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                
+                        <tr>
+                            <td><b>Cercano (2021-2050)</b></td>
+                            <td>+1.1°C</td>
+                            <td>+7 mm (+0.3%)</td>
+                            <td class="val-neg">-140 mm (-430.8%)</td>
+                            <td>+9 días</td>
+                            <td>+0 días</td>
+                        </tr>
+                    
+                        <tr>
+                            <td><b>Medio (2041-2070)</b></td>
+                            <td>+1.6°C</td>
+                            <td>-66 mm (-2.5%)</td>
+                            <td class="val-neg">-305 mm (-940.1%)</td>
+                            <td>+14 días</td>
+                            <td>+0 días</td>
+                        </tr>
+                    
+                        <tr>
+                            <td><b>Tardío (2071-2100)</b></td>
+                            <td>+1.6°C</td>
+                            <td>-1 mm (-0.0%)</td>
+                            <td class="val-neg">-224 mm (-691.7%)</td>
+                            <td>+13 días</td>
+                            <td>+0 días</td>
+                        </tr>
+                    
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                
+                                <!-- Bar Chart -->
+                                <div class="card">
+                                    <div class="card-header">Cambio en Balance Hídrico (Anual)</div>
+                                    <div class="img-wrapper" onclick="openLightbox('Napo/09_Cambios_Balance_Hidrico/delta_WB_ssp126.png')">
+                                        <img src="Napo/09_Cambios_Balance_Hidrico/delta_WB_ssp126.png" loading="lazy">
+                                    </div>
+                                </div>
+                                
+                                <!-- Monthly Maps -->
+                                <div class="card">
+                                    <div class="card-header">Mapa Mensual: Cercano (2021-2050)</div>
+                                    <div class="img-wrapper" onclick="openLightbox('Napo/21_Mapas_Mensuales_Delta_SSP126/delta_WB_mensual_ssp126_cercano.png')">
+                                        <img src="Napo/21_Mapas_Mensuales_Delta_SSP126/delta_WB_mensual_ssp126_cercano.png" loading="lazy">
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <div class="card-header">Mapa Mensual: Medio (2041-2070)</div>
+                                    <div class="img-wrapper" onclick="openLightbox('Napo/21_Mapas_Mensuales_Delta_SSP126/delta_WB_mensual_ssp126_medio.png')">
+                                        <img src="Napo/21_Mapas_Mensuales_Delta_SSP126/delta_WB_mensual_ssp126_medio.png" loading="lazy">
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <div class="card-header">Mapa Mensual: Tardío (2071-2100)</div>
+                                    <div class="img-wrapper" onclick="openLightbox('Napo/21_Mapas_Mensuales_Delta_SSP126/delta_WB_mensual_ssp126_tardio.png')">
+                                        <img src="Napo/21_Mapas_Mensuales_Delta_SSP126/delta_WB_mensual_ssp126_tardio.png" loading="lazy">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+            
+                        <div id="scen-content-FODESNA-ssp370" class="scen-content" style="display: none;">
+                            <div class="dashboard-grid">
+                                <!-- Evolution Table -->
+                                <div class="card full-width">
+                                    <div class="card-header">Evolución Temporal de Impactos (SSP3-7.0)</div>
+                                    <div class="table-container">
+                                        <table>
+                                            <thead>
+                                                <tr>
+                                                    <th>Horizonte</th>
+                                                    <th>Δ Temperatura</th>
+                                                    <th>Δ Precipitación</th>
+                                                    <th>Δ Balance Hídrico</th>
+                                                    <th>Δ Días Secos</th>
+                                                    <th>Δ Racha Seca (CDD)</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                
+                        <tr>
+                            <td><b>Cercano (2021-2050)</b></td>
+                            <td>+1.6°C</td>
+                            <td>-79 mm (-3.0%)</td>
+                            <td class="val-neg">-334 mm (-1028.9%)</td>
+                            <td>+16 días</td>
+                            <td>+0 días</td>
+                        </tr>
+                    
+                        <tr>
+                            <td><b>Medio (2041-2070)</b></td>
+                            <td>+2.7°C</td>
+                            <td>-134 mm (-5.1%)</td>
+                            <td class="val-neg">-533 mm (-1641.9%)</td>
+                            <td>+19 días</td>
+                            <td>+1 días</td>
+                        </tr>
+                    
+                        <tr>
+                            <td><b>Tardío (2071-2100)</b></td>
+                            <td>+4.4°C</td>
+                            <td>-105 mm (-4.0%)</td>
+                            <td class="val-neg">-741 mm (-2283.8%)</td>
+                            <td>+23 días</td>
+                            <td>+1 días</td>
+                        </tr>
+                    
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                
+                                <!-- Bar Chart -->
+                                <div class="card">
+                                    <div class="card-header">Cambio en Balance Hídrico (Anual)</div>
+                                    <div class="img-wrapper" onclick="openLightbox('Napo/09_Cambios_Balance_Hidrico/delta_WB_ssp370.png')">
+                                        <img src="Napo/09_Cambios_Balance_Hidrico/delta_WB_ssp370.png" loading="lazy">
+                                    </div>
+                                </div>
+                                
+                                <!-- Monthly Maps -->
+                                <div class="card">
+                                    <div class="card-header">Mapa Mensual: Cercano (2021-2050)</div>
+                                    <div class="img-wrapper" onclick="openLightbox('Napo/22_Mapas_Mensuales_Delta_SSP370/delta_WB_mensual_ssp370_cercano.png')">
+                                        <img src="Napo/22_Mapas_Mensuales_Delta_SSP370/delta_WB_mensual_ssp370_cercano.png" loading="lazy">
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <div class="card-header">Mapa Mensual: Medio (2041-2070)</div>
+                                    <div class="img-wrapper" onclick="openLightbox('Napo/22_Mapas_Mensuales_Delta_SSP370/delta_WB_mensual_ssp370_medio.png')">
+                                        <img src="Napo/22_Mapas_Mensuales_Delta_SSP370/delta_WB_mensual_ssp370_medio.png" loading="lazy">
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <div class="card-header">Mapa Mensual: Tardío (2071-2100)</div>
+                                    <div class="img-wrapper" onclick="openLightbox('Napo/22_Mapas_Mensuales_Delta_SSP370/delta_WB_mensual_ssp370_tardio.png')">
+                                        <img src="Napo/22_Mapas_Mensuales_Delta_SSP370/delta_WB_mensual_ssp370_tardio.png" loading="lazy">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+            
+                        <div id="scen-content-FODESNA-ssp585" class="scen-content" style="display: none;">
+                            <div class="dashboard-grid">
+                                <!-- Evolution Table -->
+                                <div class="card full-width">
+                                    <div class="card-header">Evolución Temporal de Impactos (SSP5-8.5)</div>
+                                    <div class="table-container">
+                                        <table>
+                                            <thead>
+                                                <tr>
+                                                    <th>Horizonte</th>
+                                                    <th>Δ Temperatura</th>
+                                                    <th>Δ Precipitación</th>
+                                                    <th>Δ Balance Hídrico</th>
+                                                    <th>Δ Días Secos</th>
+                                                    <th>Δ Racha Seca (CDD)</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                
+                        <tr>
+                            <td><b>Cercano (2021-2050)</b></td>
+                            <td>+1.6°C</td>
+                            <td>-112 mm (-4.2%)</td>
+                            <td class="val-neg">-357 mm (-1101.2%)</td>
+                            <td>+17 días</td>
+                            <td>+0 días</td>
+                        </tr>
+                    
+                        <tr>
+                            <td><b>Medio (2041-2070)</b></td>
+                            <td>+2.9°C</td>
+                            <td>-177 mm (-6.7%)</td>
+                            <td class="val-neg">-600 mm (-1850.8%)</td>
+                            <td>+27 días</td>
+                            <td>+2 días</td>
+                        </tr>
+                    
+                        <tr>
+                            <td><b>Tardío (2071-2100)</b></td>
+                            <td>+5.0°C</td>
+                            <td>-186 mm (-7.0%)</td>
+                            <td class="val-neg">-876 mm (-2698.8%)</td>
+                            <td>+25 días</td>
+                            <td>+1 días</td>
+                        </tr>
+                    
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                
+                                <!-- Bar Chart -->
+                                <div class="card">
+                                    <div class="card-header">Cambio en Balance Hídrico (Anual)</div>
+                                    <div class="img-wrapper" onclick="openLightbox('Napo/09_Cambios_Balance_Hidrico/delta_WB_ssp585.png')">
+                                        <img src="Napo/09_Cambios_Balance_Hidrico/delta_WB_ssp585.png" loading="lazy">
+                                    </div>
+                                </div>
+                                
+                                <!-- Monthly Maps -->
+                                <div class="card">
+                                    <div class="card-header">Mapa Mensual: Cercano (2021-2050)</div>
+                                    <div class="img-wrapper" onclick="openLightbox('Napo/23_Mapas_Mensuales_Delta_SSP585/delta_WB_mensual_ssp585_cercano.png')">
+                                        <img src="Napo/23_Mapas_Mensuales_Delta_SSP585/delta_WB_mensual_ssp585_cercano.png" loading="lazy">
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <div class="card-header">Mapa Mensual: Medio (2041-2070)</div>
+                                    <div class="img-wrapper" onclick="openLightbox('Napo/23_Mapas_Mensuales_Delta_SSP585/delta_WB_mensual_ssp585_medio.png')">
+                                        <img src="Napo/23_Mapas_Mensuales_Delta_SSP585/delta_WB_mensual_ssp585_medio.png" loading="lazy">
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <div class="card-header">Mapa Mensual: Tardío (2071-2100)</div>
+                                    <div class="img-wrapper" onclick="openLightbox('Napo/23_Mapas_Mensuales_Delta_SSP585/delta_WB_mensual_ssp585_tardio.png')">
+                                        <img src="Napo/23_Mapas_Mensuales_Delta_SSP585/delta_WB_mensual_ssp585_tardio.png" loading="lazy">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+            
+                    </div>
+                </div>
+
+                <!-- SECTION: SERIES TEMPORALES -->
+                <div id="series-FODESNA" class="section-container">
+                    <div class="section-title"><i class="fas fa-chart-line"></i> Series Temporales (1980-2100)</div>
+                    
+                    <div class="dashboard-grid">
+                        <div class="card">
+                            <div class="card-header">Temperatura Media</div>
+                            <div class="img-wrapper" onclick="openLightbox('Napo/01_Series_Temporales_Temperatura/temperatura_media_anual.png')"><img src="Napo/01_Series_Temporales_Temperatura/temperatura_media_anual.png" loading="lazy"></div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">Temperatura Máxima</div>
+                            <div class="img-wrapper" onclick="openLightbox('Napo/01_Series_Temporales_Temperatura/temperatura_maxima_anual.png')"><img src="Napo/01_Series_Temporales_Temperatura/temperatura_maxima_anual.png" loading="lazy"></div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">Precipitación Anual</div>
+                            <div class="img-wrapper" onclick="openLightbox('Napo/02_Series_Temporales_Hidrologicas/precipitacion_anual.png')"><img src="Napo/02_Series_Temporales_Hidrologicas/precipitacion_anual.png" loading="lazy"></div>
+                        </div>
+                         <div class="card">
+                            <div class="card-header">Balance Hídrico</div>
+                            <div class="img-wrapper" onclick="openLightbox('Napo/02_Series_Temporales_Hidrologicas/balance_hidrico_anual.png')"><img src="Napo/02_Series_Temporales_Hidrologicas/balance_hidrico_anual.png" loading="lazy"></div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">Índice de Aridez</div>
+                            <div class="img-wrapper" onclick="openLightbox('Napo/03_Indicadores_Sequia/indice_aridez_serie_temporal.png')"><img src="Napo/03_Indicadores_Sequia/indice_aridez_serie_temporal.png" loading="lazy"></div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">Días Secos Consecutivos (CDD)</div>
+                            <div class="img-wrapper" onclick="openLightbox('Napo/03_Indicadores_Sequia/dias_secos_consecutivos_serie_temporal.png')"><img src="Napo/03_Indicadores_Sequia/dias_secos_consecutivos_serie_temporal.png" loading="lazy"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- SECTION: ESTACIONALIDAD -->
+                <div id="estacionalidad-FODESNA" class="section-container">
+                    <div class="section-title"><i class="fas fa-calendar-alt"></i> Ciclo Estacional y Cambios</div>
+                    
+                    <div class="dashboard-grid">
+                        <div class="card full-width">
+                             <div class="card-header">Comparativa Ciclo Anual: Balance Hídrico</div>
+                             <div class="img-wrapper" style="height: 300px;" onclick="openLightbox('Napo/04_Climatologia_Mensual_Comparativa/ciclo_anual_balance_hidrico.png')">
+                                <img src="Napo/04_Climatologia_Mensual_Comparativa/ciclo_anual_balance_hidrico.png" loading="lazy">
+                             </div>
+                        </div>
+                        
+                        <div class="card">
+                             <div class="card-header">Ciclo Precipitación</div>
+                             <div class="img-wrapper" onclick="openLightbox('Napo/04_Climatologia_Mensual_Comparativa/ciclo_anual_precipitacion.png')"><img src="Napo/04_Climatologia_Mensual_Comparativa/ciclo_anual_precipitacion.png" loading="lazy"></div>
+                        </div>
+                        <div class="card">
+                             <div class="card-header">Ciclo Evapotranspiración</div>
+                             <div class="img-wrapper" onclick="openLightbox('Napo/04_Climatologia_Mensual_Comparativa/ciclo_anual_evapotranspiracion.png')"><img src="Napo/04_Climatologia_Mensual_Comparativa/ciclo_anual_evapotranspiracion.png" loading="lazy"></div>
+                        </div>
+                        
+                        <div class="card">
+                             <div class="card-header">Mapas Trimestrales (Base)</div>
+                             <div class="img-wrapper" onclick="openLightbox('Napo/15_Trimestres_Base/WB_trimestres_base_1981-2010.png')"><img src="Napo/15_Trimestres_Base/WB_trimestres_base_1981-2010.png" loading="lazy"></div>
+                             <div class="img-caption">Trimestres más húmedo y seco (1981-2010)</div>
+                        </div>
+                        <div class="card">
+                             <div class="card-header">Cambio Trimestral (SSP5-8.5)</div>
+                             <div class="img-wrapper" onclick="openLightbox('Napo/16_Trimestres_Cambios/delta_trimestres_ssp585.png')"><img src="Napo/16_Trimestres_Cambios/delta_trimestres_ssp585.png" loading="lazy"></div>
+                             <div class="img-caption">Alteración en patrones estacionales</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- SECTION: MAPAS -->
+                <div id="mapas-FODESNA" class="section-container">
+                    <div class="section-title"><i class="fas fa-map-marked-alt"></i> Análisis Espacial de Impactos</div>
+                    <div style="margin-bottom: 20px; color: #64748b;">Mostrando horizonte tardío (2071-2100) bajo escenario pesimista (SSP5-8.5) para resaltar riesgos máximos.</div>
+                    
+                    <div class="dashboard-grid">
+                        <div class="card">
+                            <div class="card-header">Cambio en Precipitación</div>
+                            <div class="img-wrapper" onclick="openLightbox('Napo/11_Mapas_Cambios_Precipitacion/delta_P_tardio_2071-2100.png')"><img src="Napo/11_Mapas_Cambios_Precipitacion/delta_P_tardio_2071-2100.png" loading="lazy"></div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">Cambio en Balance Hídrico</div>
+                            <div class="img-wrapper" onclick="openLightbox('Napo/13_Mapas_Cambios_Balance_Hidrico/delta_WB_tardio_2071-2100.png')"><img src="Napo/13_Mapas_Cambios_Balance_Hidrico/delta_WB_tardio_2071-2100.png" loading="lazy"></div>
+                        </div>
+                        
+                        <div class="card full-width">
+                            <div class="card-header">Detalle Mensual de Cambios (Delta WB)</div>
+                            <div class="img-wrapper" style="height: 500px;" onclick="openLightbox('Napo/23_Mapas_Mensuales_Delta_SSP585/delta_WB_mensual_ssp585_tardio.png')">
+                                <img src="Napo/23_Mapas_Mensuales_Delta_SSP585/delta_WB_mensual_ssp585_tardio.png" loading="lazy">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        
+            <div id="content-FDAT" class="region-content" style="display: none;">
+                
+                <!-- SECTION: RESUMEN EJECUTIVO -->
+                <div id="resumen-FDAT" class="section-container">
+                    <div class="section-title"><i class="fas fa-clipboard-check"></i> Resumen Ejecutivo (Línea Base 1981-2010)</div>
+                    
+                    <!-- Key Metrics -->
+                    <div class="metrics-row">
+        
+                        <div class="kpi-card">
+                            <div class="kpi-label">Precipitación</div>
+                            <div class="kpi-value">1252 <span style="font-size:1rem; font-weight:400">mm</span></div>
+                            <div class="kpi-sub">σ = 113 mm</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">Evapotranspiración</div>
+                            <div class="kpi-value">2957 <span style="font-size:1rem; font-weight:400">mm</span></div>
+                            <div class="kpi-sub">Demanda Potencial</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">Balance Hídrico</div>
+                            <div class="kpi-value">-1706 <span style="font-size:1rem; font-weight:400">mm</span></div>
+                            <div class="kpi-sub">Oferta Neta</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">Temperatura</div>
+                            <div class="kpi-value">16.0°C</div>
+                            <div class="kpi-sub">Media Anual</div>
+                        </div>
+                         <div class="kpi-card">
+                            <div class="kpi-label">Aridez (AI)</div>
+                            <div class="kpi-value">0.42</div>
+                            <div class="ai-scale"><div class="ai-fill" style="width: 50%; background-color: #d97706;"></div></div>
+                            <div class="ai-category" style="color: #d97706;">Semiárido</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">Racha Seca (CDD)</div>
+                            <div class="kpi-value">15 <span style="font-size:1rem; font-weight:400">días</span></div>
+                            <div class="kpi-sub">Máximo consecutivo</div>
+                        </div>
+            
+                    </div>
+                    
+                    <!-- Warming Stripes -->
+                    <div class="card full-width" style="margin-bottom: 30px;">
+                        <div class="card-header">
+                            <span><i class="fas fa-temperature-high"></i> Evolución Histórica y Proyectada (Warming Stripes)</span>
+                        </div>
+                        <div class="img-wrapper" style="height: 180px;" onclick="openLightbox('Tungurahua/01_Series_Temporales_Temperatura/warming_stripes_anomalias.png')">
+                            <img src="Tungurahua/01_Series_Temporales_Temperatura/warming_stripes_anomalias.png" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- SECTION: ESCENARIOS -->
+                <div id="escenarios-FDAT" class="section-container">
+                    <div class="section-title"><i class="fas fa-layer-group"></i> Análisis por Escenario</div>
+                    
+                    <div class="scenario-tabs" id="scen-tabs-FDAT">
+                        <div id="tab-FDAT-ssp126" class="scen-tab active" onclick="switchScenarioTab('FDAT', 'ssp126')">SSP1-2.6 (Optimista)</div>
+                        <div id="tab-FDAT-ssp370" class="scen-tab" onclick="switchScenarioTab('FDAT', 'ssp370')">SSP3-7.0 (Medio)</div>
+                        <div id="tab-FDAT-ssp585" class="scen-tab" onclick="switchScenarioTab('FDAT', 'ssp585')">SSP5-8.5 (Pesimista)</div>
+                    </div>
+                    
+                    <div id="scen-container-FDAT">
+        
+                        <div id="scen-content-FDAT-ssp126" class="scen-content" style="display: block;">
+                            <div class="dashboard-grid">
+                                <!-- Evolution Table -->
+                                <div class="card full-width">
+                                    <div class="card-header">Evolución Temporal de Impactos (SSP1-2.6)</div>
+                                    <div class="table-container">
+                                        <table>
+                                            <thead>
+                                                <tr>
+                                                    <th>Horizonte</th>
+                                                    <th>Δ Temperatura</th>
+                                                    <th>Δ Precipitación</th>
+                                                    <th>Δ Balance Hídrico</th>
+                                                    <th>Δ Días Secos</th>
+                                                    <th>Δ Racha Seca (CDD)</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                
+                        <tr>
+                            <td><b>Cercano (2021-2050)</b></td>
+                            <td>+1.1°C</td>
+                            <td>+26 mm (+2.1%)</td>
+                            <td class="val-neg">-149 mm (+8.7%)</td>
+                            <td>+2 días</td>
+                            <td>-1 días</td>
+                        </tr>
+                    
+                        <tr>
+                            <td><b>Medio (2041-2070)</b></td>
+                            <td>+1.5°C</td>
+                            <td>-19 mm (-1.5%)</td>
+                            <td class="val-neg">-289 mm (+16.9%)</td>
+                            <td>+9 días</td>
+                            <td>+0 días</td>
+                        </tr>
+                    
+                        <tr>
+                            <td><b>Tardío (2071-2100)</b></td>
+                            <td>+1.6°C</td>
+                            <td>+34 mm (+2.7%)</td>
+                            <td class="val-neg">-241 mm (+14.1%)</td>
+                            <td>+6 días</td>
+                            <td>+2 días</td>
+                        </tr>
+                    
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                
+                                <!-- Bar Chart -->
+                                <div class="card">
+                                    <div class="card-header">Cambio en Balance Hídrico (Anual)</div>
+                                    <div class="img-wrapper" onclick="openLightbox('Tungurahua/09_Cambios_Balance_Hidrico/delta_WB_ssp126.png')">
+                                        <img src="Tungurahua/09_Cambios_Balance_Hidrico/delta_WB_ssp126.png" loading="lazy">
+                                    </div>
+                                </div>
+                                
+                                <!-- Monthly Maps -->
+                                <div class="card">
+                                    <div class="card-header">Mapa Mensual: Cercano (2021-2050)</div>
+                                    <div class="img-wrapper" onclick="openLightbox('Tungurahua/21_Mapas_Mensuales_Delta_SSP126/delta_WB_mensual_ssp126_cercano.png')">
+                                        <img src="Tungurahua/21_Mapas_Mensuales_Delta_SSP126/delta_WB_mensual_ssp126_cercano.png" loading="lazy">
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <div class="card-header">Mapa Mensual: Medio (2041-2070)</div>
+                                    <div class="img-wrapper" onclick="openLightbox('Tungurahua/21_Mapas_Mensuales_Delta_SSP126/delta_WB_mensual_ssp126_medio.png')">
+                                        <img src="Tungurahua/21_Mapas_Mensuales_Delta_SSP126/delta_WB_mensual_ssp126_medio.png" loading="lazy">
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <div class="card-header">Mapa Mensual: Tardío (2071-2100)</div>
+                                    <div class="img-wrapper" onclick="openLightbox('Tungurahua/21_Mapas_Mensuales_Delta_SSP126/delta_WB_mensual_ssp126_tardio.png')">
+                                        <img src="Tungurahua/21_Mapas_Mensuales_Delta_SSP126/delta_WB_mensual_ssp126_tardio.png" loading="lazy">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+            
+                        <div id="scen-content-FDAT-ssp370" class="scen-content" style="display: none;">
+                            <div class="dashboard-grid">
+                                <!-- Evolution Table -->
+                                <div class="card full-width">
+                                    <div class="card-header">Evolución Temporal de Impactos (SSP3-7.0)</div>
+                                    <div class="table-container">
+                                        <table>
+                                            <thead>
+                                                <tr>
+                                                    <th>Horizonte</th>
+                                                    <th>Δ Temperatura</th>
+                                                    <th>Δ Precipitación</th>
+                                                    <th>Δ Balance Hídrico</th>
+                                                    <th>Δ Días Secos</th>
+                                                    <th>Δ Racha Seca (CDD)</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                
+                        <tr>
+                            <td><b>Cercano (2021-2050)</b></td>
+                            <td>+1.6°C</td>
+                            <td>-17 mm (-1.3%)</td>
+                            <td class="val-neg">-308 mm (+18.1%)</td>
+                            <td>+8 días</td>
+                            <td>-1 días</td>
+                        </tr>
+                    
+                        <tr>
+                            <td><b>Medio (2041-2070)</b></td>
+                            <td>+2.6°C</td>
+                            <td>-45 mm (-3.6%)</td>
+                            <td class="val-neg">-513 mm (+30.1%)</td>
+                            <td>+11 días</td>
+                            <td>+1 días</td>
+                        </tr>
+                    
+                        <tr>
+                            <td><b>Tardío (2071-2100)</b></td>
+                            <td>+4.2°C</td>
+                            <td>-23 mm (-1.8%)</td>
+                            <td class="val-neg">-774 mm (+45.4%)</td>
+                            <td>+17 días</td>
+                            <td>+3 días</td>
+                        </tr>
+                    
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                
+                                <!-- Bar Chart -->
+                                <div class="card">
+                                    <div class="card-header">Cambio en Balance Hídrico (Anual)</div>
+                                    <div class="img-wrapper" onclick="openLightbox('Tungurahua/09_Cambios_Balance_Hidrico/delta_WB_ssp370.png')">
+                                        <img src="Tungurahua/09_Cambios_Balance_Hidrico/delta_WB_ssp370.png" loading="lazy">
+                                    </div>
+                                </div>
+                                
+                                <!-- Monthly Maps -->
+                                <div class="card">
+                                    <div class="card-header">Mapa Mensual: Cercano (2021-2050)</div>
+                                    <div class="img-wrapper" onclick="openLightbox('Tungurahua/22_Mapas_Mensuales_Delta_SSP370/delta_WB_mensual_ssp370_cercano.png')">
+                                        <img src="Tungurahua/22_Mapas_Mensuales_Delta_SSP370/delta_WB_mensual_ssp370_cercano.png" loading="lazy">
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <div class="card-header">Mapa Mensual: Medio (2041-2070)</div>
+                                    <div class="img-wrapper" onclick="openLightbox('Tungurahua/22_Mapas_Mensuales_Delta_SSP370/delta_WB_mensual_ssp370_medio.png')">
+                                        <img src="Tungurahua/22_Mapas_Mensuales_Delta_SSP370/delta_WB_mensual_ssp370_medio.png" loading="lazy">
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <div class="card-header">Mapa Mensual: Tardío (2071-2100)</div>
+                                    <div class="img-wrapper" onclick="openLightbox('Tungurahua/22_Mapas_Mensuales_Delta_SSP370/delta_WB_mensual_ssp370_tardio.png')">
+                                        <img src="Tungurahua/22_Mapas_Mensuales_Delta_SSP370/delta_WB_mensual_ssp370_tardio.png" loading="lazy">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+            
+                        <div id="scen-content-FDAT-ssp585" class="scen-content" style="display: none;">
+                            <div class="dashboard-grid">
+                                <!-- Evolution Table -->
+                                <div class="card full-width">
+                                    <div class="card-header">Evolución Temporal de Impactos (SSP5-8.5)</div>
+                                    <div class="table-container">
+                                        <table>
+                                            <thead>
+                                                <tr>
+                                                    <th>Horizonte</th>
+                                                    <th>Δ Temperatura</th>
+                                                    <th>Δ Precipitación</th>
+                                                    <th>Δ Balance Hídrico</th>
+                                                    <th>Δ Días Secos</th>
+                                                    <th>Δ Racha Seca (CDD)</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                
+                        <tr>
+                            <td><b>Cercano (2021-2050)</b></td>
+                            <td>+1.5°C</td>
+                            <td>-25 mm (-2.0%)</td>
+                            <td class="val-neg">-304 mm (+17.8%)</td>
+                            <td>+8 días</td>
+                            <td>+0 días</td>
+                        </tr>
+                    
+                        <tr>
+                            <td><b>Medio (2041-2070)</b></td>
+                            <td>+2.8°C</td>
+                            <td>-68 mm (-5.5%)</td>
+                            <td class="val-neg">-558 mm (+32.7%)</td>
+                            <td>+18 días</td>
+                            <td>+2 días</td>
+                        </tr>
+                    
+                        <tr>
+                            <td><b>Tardío (2071-2100)</b></td>
+                            <td>+4.9°C</td>
+                            <td>-60 mm (-4.8%)</td>
+                            <td class="val-neg">-866 mm (+50.8%)</td>
+                            <td>+18 días</td>
+                            <td>+3 días</td>
+                        </tr>
+                    
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                
+                                <!-- Bar Chart -->
+                                <div class="card">
+                                    <div class="card-header">Cambio en Balance Hídrico (Anual)</div>
+                                    <div class="img-wrapper" onclick="openLightbox('Tungurahua/09_Cambios_Balance_Hidrico/delta_WB_ssp585.png')">
+                                        <img src="Tungurahua/09_Cambios_Balance_Hidrico/delta_WB_ssp585.png" loading="lazy">
+                                    </div>
+                                </div>
+                                
+                                <!-- Monthly Maps -->
+                                <div class="card">
+                                    <div class="card-header">Mapa Mensual: Cercano (2021-2050)</div>
+                                    <div class="img-wrapper" onclick="openLightbox('Tungurahua/23_Mapas_Mensuales_Delta_SSP585/delta_WB_mensual_ssp585_cercano.png')">
+                                        <img src="Tungurahua/23_Mapas_Mensuales_Delta_SSP585/delta_WB_mensual_ssp585_cercano.png" loading="lazy">
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <div class="card-header">Mapa Mensual: Medio (2041-2070)</div>
+                                    <div class="img-wrapper" onclick="openLightbox('Tungurahua/23_Mapas_Mensuales_Delta_SSP585/delta_WB_mensual_ssp585_medio.png')">
+                                        <img src="Tungurahua/23_Mapas_Mensuales_Delta_SSP585/delta_WB_mensual_ssp585_medio.png" loading="lazy">
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <div class="card-header">Mapa Mensual: Tardío (2071-2100)</div>
+                                    <div class="img-wrapper" onclick="openLightbox('Tungurahua/23_Mapas_Mensuales_Delta_SSP585/delta_WB_mensual_ssp585_tardio.png')">
+                                        <img src="Tungurahua/23_Mapas_Mensuales_Delta_SSP585/delta_WB_mensual_ssp585_tardio.png" loading="lazy">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+            
+                    </div>
+                </div>
+
+                <!-- SECTION: SERIES TEMPORALES -->
+                <div id="series-FDAT" class="section-container">
+                    <div class="section-title"><i class="fas fa-chart-line"></i> Series Temporales (1980-2100)</div>
+                    
+                    <div class="dashboard-grid">
+                        <div class="card">
+                            <div class="card-header">Temperatura Media</div>
+                            <div class="img-wrapper" onclick="openLightbox('Tungurahua/01_Series_Temporales_Temperatura/temperatura_media_anual.png')"><img src="Tungurahua/01_Series_Temporales_Temperatura/temperatura_media_anual.png" loading="lazy"></div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">Temperatura Máxima</div>
+                            <div class="img-wrapper" onclick="openLightbox('Tungurahua/01_Series_Temporales_Temperatura/temperatura_maxima_anual.png')"><img src="Tungurahua/01_Series_Temporales_Temperatura/temperatura_maxima_anual.png" loading="lazy"></div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">Precipitación Anual</div>
+                            <div class="img-wrapper" onclick="openLightbox('Tungurahua/02_Series_Temporales_Hidrologicas/precipitacion_anual.png')"><img src="Tungurahua/02_Series_Temporales_Hidrologicas/precipitacion_anual.png" loading="lazy"></div>
+                        </div>
+                         <div class="card">
+                            <div class="card-header">Balance Hídrico</div>
+                            <div class="img-wrapper" onclick="openLightbox('Tungurahua/02_Series_Temporales_Hidrologicas/balance_hidrico_anual.png')"><img src="Tungurahua/02_Series_Temporales_Hidrologicas/balance_hidrico_anual.png" loading="lazy"></div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">Índice de Aridez</div>
+                            <div class="img-wrapper" onclick="openLightbox('Tungurahua/03_Indicadores_Sequia/indice_aridez_serie_temporal.png')"><img src="Tungurahua/03_Indicadores_Sequia/indice_aridez_serie_temporal.png" loading="lazy"></div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">Días Secos Consecutivos (CDD)</div>
+                            <div class="img-wrapper" onclick="openLightbox('Tungurahua/03_Indicadores_Sequia/dias_secos_consecutivos_serie_temporal.png')"><img src="Tungurahua/03_Indicadores_Sequia/dias_secos_consecutivos_serie_temporal.png" loading="lazy"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- SECTION: ESTACIONALIDAD -->
+                <div id="estacionalidad-FDAT" class="section-container">
+                    <div class="section-title"><i class="fas fa-calendar-alt"></i> Ciclo Estacional y Cambios</div>
+                    
+                    <div class="dashboard-grid">
+                        <div class="card full-width">
+                             <div class="card-header">Comparativa Ciclo Anual: Balance Hídrico</div>
+                             <div class="img-wrapper" style="height: 300px;" onclick="openLightbox('Tungurahua/04_Climatologia_Mensual_Comparativa/ciclo_anual_balance_hidrico.png')">
+                                <img src="Tungurahua/04_Climatologia_Mensual_Comparativa/ciclo_anual_balance_hidrico.png" loading="lazy">
+                             </div>
+                        </div>
+                        
+                        <div class="card">
+                             <div class="card-header">Ciclo Precipitación</div>
+                             <div class="img-wrapper" onclick="openLightbox('Tungurahua/04_Climatologia_Mensual_Comparativa/ciclo_anual_precipitacion.png')"><img src="Tungurahua/04_Climatologia_Mensual_Comparativa/ciclo_anual_precipitacion.png" loading="lazy"></div>
+                        </div>
+                        <div class="card">
+                             <div class="card-header">Ciclo Evapotranspiración</div>
+                             <div class="img-wrapper" onclick="openLightbox('Tungurahua/04_Climatologia_Mensual_Comparativa/ciclo_anual_evapotranspiracion.png')"><img src="Tungurahua/04_Climatologia_Mensual_Comparativa/ciclo_anual_evapotranspiracion.png" loading="lazy"></div>
+                        </div>
+                        
+                        <div class="card">
+                             <div class="card-header">Mapas Trimestrales (Base)</div>
+                             <div class="img-wrapper" onclick="openLightbox('Tungurahua/15_Trimestres_Base/WB_trimestres_base_1981-2010.png')"><img src="Tungurahua/15_Trimestres_Base/WB_trimestres_base_1981-2010.png" loading="lazy"></div>
+                             <div class="img-caption">Trimestres más húmedo y seco (1981-2010)</div>
+                        </div>
+                        <div class="card">
+                             <div class="card-header">Cambio Trimestral (SSP5-8.5)</div>
+                             <div class="img-wrapper" onclick="openLightbox('Tungurahua/16_Trimestres_Cambios/delta_trimestres_ssp585.png')"><img src="Tungurahua/16_Trimestres_Cambios/delta_trimestres_ssp585.png" loading="lazy"></div>
+                             <div class="img-caption">Alteración en patrones estacionales</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- SECTION: MAPAS -->
+                <div id="mapas-FDAT" class="section-container">
+                    <div class="section-title"><i class="fas fa-map-marked-alt"></i> Análisis Espacial de Impactos</div>
+                    <div style="margin-bottom: 20px; color: #64748b;">Mostrando horizonte tardío (2071-2100) bajo escenario pesimista (SSP5-8.5) para resaltar riesgos máximos.</div>
+                    
+                    <div class="dashboard-grid">
+                        <div class="card">
+                            <div class="card-header">Cambio en Precipitación</div>
+                            <div class="img-wrapper" onclick="openLightbox('Tungurahua/11_Mapas_Cambios_Precipitacion/delta_P_tardio_2071-2100.png')"><img src="Tungurahua/11_Mapas_Cambios_Precipitacion/delta_P_tardio_2071-2100.png" loading="lazy"></div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">Cambio en Balance Hídrico</div>
+                            <div class="img-wrapper" onclick="openLightbox('Tungurahua/13_Mapas_Cambios_Balance_Hidrico/delta_WB_tardio_2071-2100.png')"><img src="Tungurahua/13_Mapas_Cambios_Balance_Hidrico/delta_WB_tardio_2071-2100.png" loading="lazy"></div>
+                        </div>
+                        
+                        <div class="card full-width">
+                            <div class="card-header">Detalle Mensual de Cambios (Delta WB)</div>
+                            <div class="img-wrapper" style="height: 500px;" onclick="openLightbox('Tungurahua/23_Mapas_Mensuales_Delta_SSP585/delta_WB_mensual_ssp585_tardio.png')">
+                                <img src="Tungurahua/23_Mapas_Mensuales_Delta_SSP585/delta_WB_mensual_ssp585_tardio.png" loading="lazy">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        
+        </div> <!-- End Content Area -->
+    </div> <!-- End Main Wrapper -->
+
+    <!-- Lightbox -->
+    <div id="lightbox" class="lightbox" onclick="closeLightbox()">
+        <span class="lightbox-close">&times;</span>
+        <img id="lightbox-img">
+    </div>
+
+</body>
+</html>

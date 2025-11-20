@@ -1,0 +1,142 @@
+{
+  "region": "Napo",
+  "base_period": "1981-2010",
+  "baseline": {
+    "P_annual": {
+      "mean": 2646,
+      "std": 207
+    },
+    "PET_annual": {
+      "mean": 2613,
+      "std": 81
+    },
+    "WB_annual": {
+      "mean": 32,
+      "std": 229
+    },
+    "AI": 1.01,
+    "Dry_Days": 74,
+    "CDD": 7,
+    "Temp": 17.2,
+    "seasonality": {
+      "wet_quarter": "Abr-May-Jun",
+      "dry_quarter": "Dic-Ene-Feb"
+    }
+  },
+  "projections": {
+    "ssp126": {
+      "2021-2050": {
+        "delta_P_mm": 7,
+        "delta_P_pct": 0.3,
+        "delta_PET_mm": 147,
+        "delta_PET_pct": 5.6,
+        "delta_WB_mm": -140,
+        "delta_WB_pct": -430.8,
+        "delta_AI": -0.05,
+        "delta_DryDays": 9,
+        "delta_CDD": 0,
+        "delta_Temp": 1.1
+      },
+      "2041-2070": {
+        "delta_P_mm": -66,
+        "delta_P_pct": -2.5,
+        "delta_PET_mm": 239,
+        "delta_PET_pct": 9.2,
+        "delta_WB_mm": -305,
+        "delta_WB_pct": -940.1,
+        "delta_AI": -0.11,
+        "delta_DryDays": 14,
+        "delta_CDD": 0,
+        "delta_Temp": 1.6
+      },
+      "2071-2100": {
+        "delta_P_mm": -1,
+        "delta_P_pct": -0.0,
+        "delta_PET_mm": 223,
+        "delta_PET_pct": 8.5,
+        "delta_WB_mm": -224,
+        "delta_WB_pct": -691.7,
+        "delta_AI": -0.08,
+        "delta_DryDays": 13,
+        "delta_CDD": 0,
+        "delta_Temp": 1.6
+      }
+    },
+    "ssp370": {
+      "2021-2050": {
+        "delta_P_mm": -79,
+        "delta_P_pct": -3.0,
+        "delta_PET_mm": 255,
+        "delta_PET_pct": 9.8,
+        "delta_WB_mm": -334,
+        "delta_WB_pct": -1028.9,
+        "delta_AI": -0.12,
+        "delta_DryDays": 16,
+        "delta_CDD": 0,
+        "delta_Temp": 1.6
+      },
+      "2041-2070": {
+        "delta_P_mm": -134,
+        "delta_P_pct": -5.1,
+        "delta_PET_mm": 399,
+        "delta_PET_pct": 15.3,
+        "delta_WB_mm": -533,
+        "delta_WB_pct": -1641.9,
+        "delta_AI": -0.18,
+        "delta_DryDays": 19,
+        "delta_CDD": 1,
+        "delta_Temp": 2.7
+      },
+      "2071-2100": {
+        "delta_P_mm": -105,
+        "delta_P_pct": -4.0,
+        "delta_PET_mm": 636,
+        "delta_PET_pct": 24.3,
+        "delta_WB_mm": -741,
+        "delta_WB_pct": -2283.8,
+        "delta_AI": -0.23,
+        "delta_DryDays": 23,
+        "delta_CDD": 1,
+        "delta_Temp": 4.4
+      }
+    },
+    "ssp585": {
+      "2021-2050": {
+        "delta_P_mm": -112,
+        "delta_P_pct": -4.2,
+        "delta_PET_mm": 245,
+        "delta_PET_pct": 9.4,
+        "delta_WB_mm": -357,
+        "delta_WB_pct": -1101.2,
+        "delta_AI": -0.12,
+        "delta_DryDays": 17,
+        "delta_CDD": 0,
+        "delta_Temp": 1.6
+      },
+      "2041-2070": {
+        "delta_P_mm": -177,
+        "delta_P_pct": -6.7,
+        "delta_PET_mm": 423,
+        "delta_PET_pct": 16.2,
+        "delta_WB_mm": -600,
+        "delta_WB_pct": -1850.8,
+        "delta_AI": -0.2,
+        "delta_DryDays": 27,
+        "delta_CDD": 2,
+        "delta_Temp": 2.9
+      },
+      "2071-2100": {
+        "delta_P_mm": -186,
+        "delta_P_pct": -7.0,
+        "delta_PET_mm": 690,
+        "delta_PET_pct": 26.4,
+        "delta_WB_mm": -876,
+        "delta_WB_pct": -2698.8,
+        "delta_AI": -0.27,
+        "delta_DryDays": 25,
+        "delta_CDD": 1,
+        "delta_Temp": 5.0
+      }
+    }
+  }
+}

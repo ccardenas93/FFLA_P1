@@ -1,0 +1,68 @@
+# NÚMEROS CLAVE DE CAMBIO CLIMÁTICO — Napo
+Período base: 1981–2010
+
+## Oferta hídrica y balance — Línea base (promedio ± DE)
+• Precipitación anual: 2,646 ± 207 mm/año
+• Evapotranspiración potencial anual: 2,613 ± 81 mm/año
+• Balance hídrico anual (P - PET): 32 ± 229 mm/año
+• Índice de aridez (AI = P/PET): 1.01
+• Días secos por año (P<1.0 mm/día): 74 días/año
+• Racha seca máxima media (CDD): 7 días
+• Temperatura media anual: 17.2 °C
+
+## Estacionalidad — Línea base (trimestres)
+• Trimestre más húmedo (base): Abr-May-Jun | P=814 mm, PET=644 mm, WB=170 mm
+• Trimestre más seco   (base): Dic-Ene-Feb | P=562 mm, PET=624 mm, WB=-62 mm
+
+## Cambios proyectados vs 1981–2010
+### SSP126
+• Cercano (2021–2050):
+   – ΔP = 7 mm/año (+0.3%) | ΔPET = 147 mm/año (+5.6%) | ΔWB = -140 mm/año (-430.8%)
+   – ΔAI (P/PET) = -0.05
+   – Δ días secos/año = +9 | Δ CDD = -0 días
+   – ΔT media anual = +1.1 °C
+• Medio (2041–2070):
+   – ΔP = -66 mm/año (-2.5%) | ΔPET = 239 mm/año (+9.2%) | ΔWB = -305 mm/año (-940.1%)
+   – ΔAI (P/PET) = -0.11
+   – Δ días secos/año = +14 | Δ CDD = +0 días
+   – ΔT media anual = +1.6 °C
+• Tardío (2071–2100):
+   – ΔP = -1 mm/año (-0.0%) | ΔPET = 223 mm/año (+8.5%) | ΔWB = -224 mm/año (-691.7%)
+   – ΔAI (P/PET) = -0.08
+   – Δ días secos/año = +13 | Δ CDD = -0 días
+   – ΔT media anual = +1.6 °C
+
+### SSP370
+• Cercano (2021–2050):
+   – ΔP = -79 mm/año (-3.0%) | ΔPET = 255 mm/año (+9.8%) | ΔWB = -334 mm/año (-1028.9%)
+   – ΔAI (P/PET) = -0.12
+   – Δ días secos/año = +16 | Δ CDD = +0 días
+   – ΔT media anual = +1.6 °C
+• Medio (2041–2070):
+   – ΔP = -134 mm/año (-5.1%) | ΔPET = 399 mm/año (+15.3%) | ΔWB = -533 mm/año (-1641.9%)
+   – ΔAI (P/PET) = -0.18
+   – Δ días secos/año = +19 | Δ CDD = +1 días
+   – ΔT media anual = +2.7 °C
+• Tardío (2071–2100):
+   – ΔP = -105 mm/año (-4.0%) | ΔPET = 636 mm/año (+24.3%) | ΔWB = -741 mm/año (-2283.8%)
+   – ΔAI (P/PET) = -0.23
+   – Δ días secos/año = +23 | Δ CDD = +1 días
+   – ΔT media anual = +4.4 °C
+
+### SSP585
+• Cercano (2021–2050):
+   – ΔP = -112 mm/año (-4.2%) | ΔPET = 245 mm/año (+9.4%) | ΔWB = -357 mm/año (-1101.2%)
+   – ΔAI (P/PET) = -0.12
+   – Δ días secos/año = +17 | Δ CDD = +0 días
+   – ΔT media anual = +1.6 °C
+• Medio (2041–2070):
+   – ΔP = -177 mm/año (-6.7%) | ΔPET = 423 mm/año (+16.2%) | ΔWB = -600 mm/año (-1850.8%)
+   – ΔAI (P/PET) = -0.20
+   – Δ días secos/año = +27 | Δ CDD = +2 días
+   – ΔT media anual = +2.9 °C
+• Tardío (2071–2100):
+   – ΔP = -186 mm/año (-7.0%) | ΔPET = 690 mm/año (+26.4%) | ΔWB = -876 mm/año (-2698.8%)
+   – ΔAI (P/PET) = -0.27
+   – Δ días secos/año = +25 | Δ CDD = +1 días
+   – ΔT media anual = +5.0 °C
+
